@@ -1,0 +1,194 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================
+   THEME TOKENS — values are OKLCH "L C H" triples.
+   [data-mode] on <html> swaps the whole palette at runtime.
+   ============================================================ */
+
+/* WIREFRAME — light grayscale, neutral. Approved wireframe kept 1:1. */
+:root,
+[data-mode="wireframe"] {
+  color-scheme: light;
+
+  --canvas: 1 0 0;
+  --surface: 1 0 0;
+  --subtle: 0.985 0 0;
+  --raised: 1 0 0;
+  --fg: 0.22 0 0;
+  --muted: 0.45 0 0;
+  --faint: 0.56 0 0;
+  --line: 0.92 0 0;
+  --line-strong: 0.86 0 0;
+
+  /* Brand + CTA collapse to graphite in wireframe → stays colorless */
+  --brand: 0.22 0 0;
+  --brand-hover: 0.34 0 0;
+  --on-brand: 1 0 0;
+  --cta: 0.22 0 0;
+  --cta-hover: 0.34 0 0;
+  --on-cta: 1 0 0;
+
+  --grid: 0 0 0;
+  --grid-alpha: 0.06;
+
+  --shadow-panel: 0 1px 2px oklch(0 0 0 / 0.04);
+  --shadow-lift: 0 4px 12px oklch(0 0 0 / 0.06);
+
+  --ff-display: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --ff-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --ff-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+/* DESIGN — dark industrial. "Oscilloscope on a calibration bench":
+   graphite panel, azure signal-trace (brand), amber indicator (CTA).
+   Neutrals tinted cool (hue ~255). */
+[data-mode="design"] {
+  color-scheme: dark;
+
+  --canvas: 0.16 0.012 255;
+  --surface: 0.205 0.014 255;
+  --subtle: 0.185 0.013 255;
+  --raised: 0.245 0.015 255;
+  --fg: 0.95 0.006 250;
+  --muted: 0.75 0.014 250;
+  --faint: 0.6 0.018 250;
+  --line: 0.3 0.014 255;
+  --line-strong: 0.37 0.016 255;
+
+  --brand: 0.66 0.15 240;
+  --brand-hover: 0.72 0.15 240;
+  --on-brand: 0.16 0.03 250;
+  --cta: 0.74 0.16 58;
+  --cta-hover: 0.8 0.15 62;
+  --on-cta: 0.18 0.04 58;
+
+  --grid: 0.66 0.15 240;
+  --grid-alpha: 0.1;
+
+  --shadow-panel: 0 1px 0 oklch(1 0 0 / 0.04) inset, 0 8px 24px -12px oklch(0 0 0 / 0.7);
+  --shadow-lift: 0 16px 40px -16px oklch(0 0 0 / 0.8);
+
+  --ff-display: var(--font-alumni), ui-sans-serif, system-ui, sans-serif;
+  --ff-sans: var(--font-onest), ui-sans-serif, system-ui, sans-serif;
+  --ff-mono: var(--font-martian), ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+/* ============================================================ */
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-canvas text-fg antialiased;
+  font-family: var(--ff-sans);
+}
+
+/* Display face on headings. In wireframe --ff-display is system sans,
+   so the wireframe is unaffected; in design it becomes Saira. */
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--ff-display);
+}
+
+[data-mode="design"] h1,
+[data-mode="design"] h2 {
+  letter-spacing: -0.01em;
+}
+
+/* Gentle cross-fade when toggling modes */
+body,
+header,
+section,
+footer,
+.themed {
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+/* ---- Wireframe annotation label / kicker ---- */
+.wf-label {
+  @apply inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-widest text-faint;
+}
+
+/* In design mode the kicker becomes a branded eyebrow with a lead rule */
+[data-mode="design"] .wf-label {
+  @apply text-brand;
+  letter-spacing: 0.2em;
+}
+[data-mode="design"] .wf-label::before {
+  content: "";
+  width: 1.5rem;
+  height: 1px;
+  background: oklch(var(--brand));
+  display: inline-block;
+}
+/* Centered kickers get a symmetric line on both sides */
+[data-mode="design"] .text-center .wf-label::after {
+  content: "";
+  width: 1.5rem;
+  height: 1px;
+  background: oklch(var(--brand));
+  display: inline-block;
+}
+
+/* Pure-scaffolding annotations: hidden once design is applied */
+[data-mode="design"] .wf-only {
+  display: none !important;
+}
+
+/* Logos are black-on-light (no alpha). On the dark design surface, invert to
+   white and screen-blend the light backplate away → clean white mark. */
+[data-mode="design"] .brand-logo {
+  filter: invert(1) brightness(1.15);
+  mix-blend-mode: screen;
+}
+
+/* Placeholder media box — wireframe hatch */
+.wf-media {
+  @apply flex items-center justify-center border border-dashed border-line-strong bg-subtle text-faint;
+  background-image: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 11px,
+    oklch(var(--grid) / 0.025) 11px,
+    oklch(var(--grid) / 0.025) 12px
+  );
+}
+
+/* Live ticker indicator — becomes a pulsing azure signal in design mode */
+[data-mode="design"] .live-dot {
+  background: oklch(var(--brand));
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+/* Hero radial aura — only in design mode */
+.hero-aura {
+  display: none;
+}
+[data-mode="design"] .hero-aura {
+  display: block;
+  background:
+    radial-gradient(60% 50% at 50% 0%, oklch(var(--brand) / 0.16), transparent 70%),
+    radial-gradient(40% 40% at 85% 30%, oklch(var(--cta) / 0.08), transparent 70%);
+}
+
+/* Brand divider logo — oval shape, edges fade to transparent */
+.brand-divider-logo {
+  -webkit-mask-image: radial-gradient(ellipse 70% 82% at center, black 35%, transparent 65%);
+  mask-image: radial-gradient(ellipse 70% 82% at center, black 35%, transparent 65%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
