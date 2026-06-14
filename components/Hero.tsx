@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { ArrowRight, Cpu } from "lucide-react";
 import CategorySelector from "./CategorySelector";
+import SignalField from "./SignalField";
 import { categories, liveParams } from "./content";
 
 export default function Hero() {
@@ -39,6 +40,10 @@ export default function Hero() {
             "radial-gradient(120% 90% at 50% 0%, #000 40%, transparent 100%)",
         }}
       />
+
+      {/* Animated signal pulses travelling up the ECU grid — design mode only */}
+      <SignalField />
+
       <span className="wf-label wf-only absolute right-4 top-4 z-10">
         <Cpu className="h-3.5 w-3.5" /> Фон: интерактивная микросхема ECU
       </span>
