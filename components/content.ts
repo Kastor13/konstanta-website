@@ -1,19 +1,16 @@
 // Single source of content for the wireframe (RU — default site language).
 // In the build phase this moves to the CMS / i18n layer (RU / EE / EN).
 
-import {
-  Bike,
-  Sailboat,
-  Car,
-  Truck,
-  Tractor,
-  type LucideIcon,
-} from "lucide-react";
+import { Sailboat, Car, Truck, Tractor } from "lucide-react";
+import type { SVGProps } from "react";
+import MotorcycleIcon from "./MotorcycleIcon";
+
+type IconComponent = React.ComponentType<SVGProps<SVGSVGElement> & { size?: number | string; strokeWidth?: number | string }>;
 
 export type Category = {
   id: string;
   label: string;
-  icon: LucideIcon;
+  icon: IconComponent;
   /** Subhead variant shown when this category is active */
   tagline: string;
 };
@@ -23,7 +20,7 @@ export const categories: Category[] = [
   {
     id: "moto",
     label: "Мотоциклы",
-    icon: Bike,
+    icon: MotorcycleIcon,
     tagline: "Раскрываем характер мотора без потери ресурса.",
   },
   {
